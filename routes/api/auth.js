@@ -54,7 +54,7 @@ router.post("/login", async (req, res) => {
         const token = await jwt.generateToken({
           _id: users[0]._id,
           email: users[0].email,
-          name: users[0].name,
+          name: users[0].firstname,
           isAdmin: users[0].isAdmin,
         });
 
