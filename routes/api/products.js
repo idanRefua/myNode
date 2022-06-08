@@ -122,21 +122,10 @@ router.put("/updateproducts/:id", async (req, res) => {
       userId,
       productBody
     );
+
     res.status(200).json(updatedProduct);
   } catch (eror) {
-    res.status(400).send(error);
-  }
-});
-
-router.post("/addlike/:id", async (req, res) => {
-  try {
-    const productId = req.params.id;
-    const userId = req.userData._id;
-    const like = await productsMoudle.addLikeToProduct(productId, userId);
-
-    res.status(200).json({ like });
-  } catch (error) {
-    res.status(400).send(error);
+    res.status(400).send({ error });
   }
 });
 
@@ -145,6 +134,17 @@ router.get("/myfavourites", async (req, res) => {
     const userId = req.userData._id;
     const myFavourites = await productsMoudle.myFavourites(userId);
     res.json({ myFavourites });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+router.post("/addlike/:id", async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const userId = req.userData._id;
+    const like = await productsMoudle.addLikeToProduct(productId, userId);
+
+    res.status(200).json({ like });
   } catch (error) {
     res.status(400).send(error);
   }

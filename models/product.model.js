@@ -59,6 +59,7 @@ const updateProduct = (id, userId, body) => {
     _id: id,
     createdBy: userId,
   };
+
   return Products.updateOne(filter, updateProduct);
 };
 
