@@ -94,6 +94,7 @@ router.patch("/edituserdetails/:id", async (req, res) => {
 router.get("/mydetails", authMiddleWare, async (req, res) => {
   try {
     const id = req.userData._id;
+
     const userInfo = await usersMoudle.myDetails(id);
     res.status(200).json(userInfo);
   } catch (error) {
@@ -104,8 +105,36 @@ router.get("/mydetails", authMiddleWare, async (req, res) => {
 router.patch("/changepass/:id", async (req, res) => {
   try {
     const userId = req.params.id;
+    const validateEditPassword =
+      await usersValidation.changePasswordSchema.validateAsync(req.body, {
+        abortEarly: false,
+      });
+    const user = await usersMoudle.myDetails(userId);
+
+    const userPassword = await bcrypt.comparePassword(
+      validateEditPassword.oldPassword,
+      user.password
+    );
+    if (userPassword) {
+      if (
+        validateEditPassword.newPassword === validateEditPassword.newPassword2
+      ) {
+        const hashPassword = await bcrypt.createPassword(
+          validateEditPassword.newPassword2
+        );
+        const updatePassword = await usersMoudle.editPassword(
+          userId,
+          hashPassword
+        );
+        res.status(200).send("Your Password Change !");
+      } else {
+        throw "The two password don't Match !";
+      }
+    } else {
+      throw "The password is inccorect !";
+    }
   } catch (error) {
-    console.log(error);
+    res.status(400).send({ error });
   }
 });
 

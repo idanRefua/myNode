@@ -1,3 +1,4 @@
+const { options } = require("joi");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -32,7 +33,36 @@ const addUser = (email, password, firstname, lastname, isAdmin, phone) => {
   return user.save();
 };
 
+const editUserDetail = (id, validateEmail, validateName, validateLastname) => {
+  const filter = { _id: id };
+  const update = {
+    $set: {
+      email: validateEmail,
+      firstname: validateName,
+      lastname: validateLastname,
+    },
+  };
+  const options = { new: true, useFindAndModify: false };
+
+  return Users.findOneAndUpdate(filter, update, options);
+};
+
+const myDetails = (id) => {
+  return Users.findOne({ _id: id });
+};
+
+const editPassword = (id, validatePassword) => {
+  const filter = { _id: id };
+  const update = { $set: { password: validatePassword } };
+  const options = { new: true, useFindAndModify: false };
+
+  return Users.findOneAndUpdate(filter, update, options);
+};
+
 module.exports = {
   selectUserByEmail,
   addUser,
+  editUserDetail,
+  myDetails,
+  editPassword,
 };
