@@ -4,6 +4,7 @@ const jwt = require("../../config/jwt");
 const bcrypt = require("../../config/bcrypt");
 const usersMoudle = require("../../models/users.model");
 const usersValidation = require("../../validation/user.validation");
+const authMiddleWare = require("../../middleware/auth.middleware");
 
 router.post("/register", async (req, res) => {
   try {
@@ -54,7 +55,7 @@ router.post("/login", async (req, res) => {
         const token = await jwt.generateToken({
           _id: users[0]._id,
           email: users[0].email,
-          name: users[0].firstname,
+          firstname: users[0].firstname,
           lastname: users[0].lastname,
           isAdmin: users[0].isAdmin,
         });
@@ -70,4 +71,42 @@ router.post("/login", async (req, res) => {
     res.status(400).json({ error });
   }
 });
+
+router.patch("/edituserdetails/:id", async (req, res) => {
+  const userId = req.params.id;
+  try {
+    const validateEdit = await usersValidation.editDetailsSchema.validateAsync(
+      req.body,
+      { abortEarly: false }
+    );
+    const updateUser = await usersMoudle.editUserDetail(
+      userId,
+      validateEdit.email,
+      validateEdit.firstname,
+      validateEdit.lastname
+    );
+    res.status(200).send(updateUser);
+  } catch (error) {
+    res.status(400).json({ error });
+  }
+});
+
+router.get("/mydetails", authMiddleWare, async (req, res) => {
+  try {
+    const id = req.userData._id;
+    const userInfo = await usersMoudle.myDetails(id);
+    res.status(200).json(userInfo);
+  } catch (error) {
+    res.status(400).json({ error });
+  }
+});
+
+router.patch("/changepass/:id", async (req, res) => {
+  try {
+    const userId = req.params.id;
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 module.exports = router;
