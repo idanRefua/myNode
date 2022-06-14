@@ -112,7 +112,7 @@ router.patch("/changepass/:id", async (req, res) => {
     const user = await usersMoudle.myDetails(userId);
 
     const userPassword = await bcrypt.comparePassword(
-      validateEditPassword.oldPassword,
+      validateEditPassword.currentPassword,
       user.password
     );
     if (userPassword) {

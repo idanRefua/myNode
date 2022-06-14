@@ -49,7 +49,7 @@ const editUserDetails = {
 };
 
 const editPasswordRoles = {
-  oldPassword: Joi.string().regex(
+  currentPassword: Joi.string().regex(
     new RegExp("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*()]).{6,}$")
   ),
   newPassword: Joi.string().regex(
